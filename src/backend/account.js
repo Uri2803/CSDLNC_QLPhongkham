@@ -17,10 +17,10 @@ let login = (req, res) =>{
                     else{
                         if(result){
                             if(user.role == 'ADDMIN'){
-
+                                res.json({message: 'đăng nhập thành công', status: true, role: 'ADMIN', user: user});
                             }
                             if(user.role == ''){
-                                
+
                             }
                         }
                     }
@@ -36,4 +36,8 @@ let login = (req, res) =>{
     }
     
 
+}
+
+module.exports = {
+    login: login,
 }

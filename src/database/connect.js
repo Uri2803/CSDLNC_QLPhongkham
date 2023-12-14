@@ -4,9 +4,11 @@ const config = {
     user: 'sa',
     password: 'MinQuan@',
     server: 'localhost',
+    port: 1433,
     database: 'QLPKNK',
     options: {
-        encrypt: true, 
+        encrypt: true,
+        trustServerCertificate: true, 
     },
 
 }

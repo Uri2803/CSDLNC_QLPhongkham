@@ -1,17 +1,18 @@
 import express from "express";
 import path from "path";
+import ac from "./backend/account";
 
 
 const app = express();
 const port = 3000;
 
 app.get('/', (req, res) => {
-  const pa = path.join(__dirname, 'frontend/mainpage.html');
-  res.sendFile(pa);
-});
-app.get('/login', (req, res) =>{
+  res.json({message: 'test'});
 
 });
+
+app.get('/login', ac.login);
+
 
 
 

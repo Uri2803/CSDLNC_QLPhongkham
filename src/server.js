@@ -7,21 +7,13 @@ const app = express();
 const port = 3000;
 
 app.get('/', (req, res) => {
-  res.json({message: 'test'});
-
+  res.json({message: 'mainpage'});
 });
+app.post('/login', ac.login);
 
-app.get('/login', ac.login);
+app.post('/register', ac.register);
 
-
-
-
-app.post('/login', (req, res) =>{
-
-});
-app.post('/register', (req, res)=>{
-
-});
+app.get('/customer/appointment');
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);

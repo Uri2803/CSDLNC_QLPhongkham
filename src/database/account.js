@@ -6,7 +6,6 @@ let findUser = async (username, result) => {
     const request = db.request();
     request.input('UserName', sql.NVarChar(20), username);
     const res = await request.query("EXEC GetUserByUsername @UserName");
-    console.log(res);
     return result(null, res.recordset[0]);
   } 
   catch (err) {
@@ -52,17 +51,19 @@ let getUserInfor = async (userId, result) => {
     try {
       await connectToDatabase(); 
       const request = db.request();
-      request.input('userId', sql.VarChar(5), userId,);
+      request.input('userId', sql.VarChar(5), userId);
       const res = await request.query("EXEC ReadUserInfoByUserId @userId");
       return result(null, res.recordset[0]);
     } 
     catch (err) {
+        console.log('err' +err);
       return result(err, null);
     } 
     finally {
       sql.close();
     }
-  };
+};
+
 module.exports = {
     findUser: findUser,
     creaateUser, creaateUser,

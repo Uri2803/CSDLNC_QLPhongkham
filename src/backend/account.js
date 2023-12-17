@@ -41,7 +41,7 @@ let login = (req, res) =>{
 let register = (req, res) => {
     const { username, password, mail } = req.body;
     if (username && npassword && mail) {
-        acc.findUser(username, (err, user) => { // kiểm tra user có tồn tại không 
+        ac.findUser(username, (err, user) => { // kiểm tra user có tồn tại không 
             if (user) {
                 res.json({status: false, message: 'Tài khoản đã tồn tại'});
             } 
@@ -68,16 +68,24 @@ let test = (req, res) =>{
 }
 
 let getUserInfor = (req, res) =>{
-    const userId = req.body;
-    acc.getUserInfor(userId, (err, user) =>{
+    const {userId} = req.body;
+    console.log(userId);
+    ac.getUserInfor(userId, (err, user) =>{
         if(err){
-            res.json({message: 'lỗi kết nối', user: null });
+            console.log(err);
+            res.json({message: 'lỗi kết nối', user: null, status: false });
         }
         else{
-            res.json({user:user});
+            res.json({user:user, status: true});
         }
     });
-    
+}
+
+let updateUserInfor = (req, res) =>{
+    const {userId, fullName, brirthday, sex, mail } = req.body;
+    ac.updateUserInfor();
+    //UI.User_ID, UI.FullName, UI.UserName, UI.BirthDay, UI.Age, UI.Sex, U.Email, R.RoleName, R.RoleDescription 
+
 }
 
 

@@ -8,7 +8,7 @@ END;
 GO
 
 --find an user by username
-CREATE PROCEDURE GetUserByUsername
+CREATE OR ALTER PROCEDURE GetUserByUsername
     @UserName NVARCHAR(20)
 AS
 BEGIN
@@ -29,6 +29,7 @@ AS
 BEGIN
     INSERT INTO [USER] ([UserName], [Password], [Email], [Role_ID])
     VALUES (@UserName, @Password, @Email, @Role_ID);
+    
 END;
 GO
 
@@ -70,27 +71,30 @@ CREATE OR ALTER PROCEDURE AddUserInfo
     @UserName NVARCHAR(20),
     @FullName NVARCHAR(70),
     @BirthDay DATETIME,
-    @Sex NVARCHAR(3),
-    @Age INT
+    @Sex NVARCHAR(3)
 AS
 BEGIN
-    INSERT INTO [USER_INFOR] ([User_ID], [UserName], [FullName], [BirthDay], [Sex], [Age])
-    VALUES (@User_ID, @UserName, @FullName, @BirthDay, @Sex, @Age);
-END;
+    DECLARE @Age INT
+    SET @Age = DATEDIFF(YEAR, @BirthDay, GETDATE())
+    INSERT INTO [USER_INFOR] ([User_ID], [UserName], [FullName], [BirthDay], [Sex], [Age]) 
+    VALUES (@User_ID, @UserName, @FullName, @BirthDay, @Sex, @Age)
+END
 GO
 
 --update an user info by username
 CREATE OR ALTER PROCEDURE UpdateUserInfo
+    @UserId VARCHAR(5),
     @UserName NVARCHAR(20),
     @NewFullName NVARCHAR(50),
     @NewBirthDay DATETIME,
-    @NewSex NVARCHAR(3),
-    @NewAge INT
+    @NewSex NVARCHAR(3)
 AS
 BEGIN
+    DECLARE @NewAge INT
+    SET @NewAge = DATEDIFF(YEAR, @NewBirthDay, GETDATE())
     UPDATE [USER_INFOR]
     SET [FullName] = @NewFullName, [BirthDay] = @NewBirthDay, [Sex] = @NewSex, [Age] = @NewAge
-    WHERE [UserName] = @UserName;
+    WHERE [USER_ID] = @UserId;
 END;
 GO
 

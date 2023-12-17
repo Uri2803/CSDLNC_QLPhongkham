@@ -52,7 +52,7 @@ let getUserInfor = async (userId, result) => {
     try {
       await connectToDatabase(); 
       const request = db.request();
-      request.input('userId', sql.VarChar(5), userID);
+      request.input('userId', sql.VarChar(5), userId,);
       const res = await request.query("EXEC ReadUserInfoByUserId @userId");
       return result(null, res.recordset[0]);
     } 

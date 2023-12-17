@@ -24,6 +24,8 @@ app.post('/register', ac.register);
 
 app.get('/customer/appointment');
 
+app.get('/userinfor', ac.getUserInfor);
+
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });

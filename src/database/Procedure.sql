@@ -29,6 +29,7 @@ AS
 BEGIN
     INSERT INTO [USER] ([UserName], [Password], [Email], [Role_ID])
     VALUES (@UserName, @Password, @Email, @Role_ID);
+    
 END;
 GO
 
@@ -82,6 +83,7 @@ GO
 
 --update an user info by username
 CREATE OR ALTER PROCEDURE UpdateUserInfo
+    @UserId VARCHAR(5),
     @UserName NVARCHAR(20),
     @NewFullName NVARCHAR(50),
     @NewBirthDay DATETIME,
@@ -89,10 +91,10 @@ CREATE OR ALTER PROCEDURE UpdateUserInfo
 AS
 BEGIN
     DECLARE @NewAge INT
-    SET @NewAge = DATEDIFF(YEAR, @BirthDay, GETDATE())
+    SET @NewAge = DATEDIFF(YEAR, @NewBirthDay, GETDATE())
     UPDATE [USER_INFOR]
     SET [FullName] = @NewFullName, [BirthDay] = @NewBirthDay, [Sex] = @NewSex, [Age] = @NewAge
-    WHERE [UserName] = @UserName;
+    WHERE [USER_ID] = @UserId;
 END;
 GO
 

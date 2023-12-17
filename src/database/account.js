@@ -70,7 +70,7 @@ let updateUserInfor= async (user, result) =>{
     await connectToDatabase(); 
     const request = db.request();
     request.input('userId', sql.VarChar(5), userId);
-    const res = await request.query("EXEC ReadUserInfoByUserId @userId");
+    const res = await request.query("EXEC UpdateUserInfo @UserId, @UserName ,@NewFullName ,@NewBirthDay ,@NewSex)");
     return result(null, res.recordset[0]);
   } 
   catch (err) {

@@ -40,7 +40,10 @@ CREATE TABLE [USER_INFOR] (
   [FullName] NVARCHAR(70),
   [BirthDay] DATETIME,
   [Sex] NVARCHAR(3),
-  [Age] INT
+  [Age] INT,
+  [Address] VARCHAR(100),
+  [Phone] CHAR(10),
+  [Banking] NVARCHAR(20)
 )
 GO
 

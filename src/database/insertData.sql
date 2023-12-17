@@ -22,3 +22,7 @@ VALUES
   ('M018', N'Dental Crown Cement', 80, N'Dental Care', N'Crown fixation', N'Cement for fixing dental crowns', N'Tube'),
   ('M019', N'Toothbrush Replacement Heads', 120, N'Dental Care', N'Hygienic brushing', N'Replacement heads for electric toothbrushes', N'Pack'),
   ('M020', N'Dental Mirror', 90, N'Dental Care', N'Oral examination', N'Mirror for dental professionals to examine the oral cavity', N'Piece');
+
+
+
+

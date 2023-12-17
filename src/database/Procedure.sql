@@ -12,9 +12,9 @@ CREATE PROCEDURE GetUserByUsername
     @UserName NVARCHAR(20)
 AS
 BEGIN
-    SELECT [UserName], [Password], [Email], [RoleName]
-    FROM [USER] U JOIN [ROLE] R ON U.Role_ID = R.Role_ID
-    WHERE [UserName] = @UserName;
+    SELECT UI.User_ID, UI.UserName, [Password], [Email], [RoleName]
+    FROM [USER] U JOIN [ROLE] R ON U.Role_ID = R.Role_ID JOIN [USER_INFOR] UI ON  UI.UserName = U.UserName
+    WHERE UI.UserName = @UserName;
 END;
 GO
 
@@ -24,7 +24,7 @@ CREATE OR ALTER PROCEDURE AddUser
     @UserName NVARCHAR(20),
     @Password VARCHAR(300),
     @Email VARCHAR(50),
-    @Role_ID VARCHAR(5)
+    @Role_ID CHAR(5)
 AS
 BEGIN
     INSERT INTO [USER] ([UserName], [Password], [Email], [Role_ID])
@@ -38,7 +38,7 @@ CREATE OR ALTER PROCEDURE UpdateUser
     @UserName NVARCHAR(20),
     @NewPassword VARCHAR(150),
     @NewEmail VARCHAR(50),
-    @NewRole_ID VARCHAR(5)
+    @NewRole_ID CHAR(5)
 AS
 BEGIN
     UPDATE [USER]
@@ -66,7 +66,7 @@ GO
  
  --add an user info
 CREATE OR ALTER PROCEDURE AddUserInfo
-    @User_ID VARCHAR(5),
+    @User_ID CHAR(5),
     @UserName NVARCHAR(20),
     @FullName NVARCHAR(70),
     @BirthDay DATETIME,
@@ -82,7 +82,7 @@ GO
 --update an user info by username
 CREATE OR ALTER PROCEDURE UpdateUserInfo
     @UserName NVARCHAR(20),
-    @NewFullName NVARCHAR(70),
+    @NewFullName NVARCHAR(50),
     @NewBirthDay DATETIME,
     @NewSex NVARCHAR(3),
     @NewAge INT
@@ -156,7 +156,7 @@ BEGIN
 END;
 GO
 
-
+-- Calculate Total Payment By Invoice ID
 CREATE OR ALTER PROCEDURE CalculateTotalPaymentByInvoiceID
     @Invoice_ID VARCHAR(5)
 AS

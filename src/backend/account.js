@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 
 
 let login = (req, res) =>{
+    console.log(req.body);
     const {username, password} = req.body;
     if(username, password){
         ac.findUser(username, (err, user) =>{
@@ -10,16 +11,21 @@ let login = (req, res) =>{
                 res.json({message: 'Username hoặc mật khẩu không đúng', status: false});
             }
             else{
-                bcrypt.compare(password, user.password, (err, result)=>{
+                bcrypt.compare(password, user.Password, (err, result)=>{
                     if(err){
                         res.json( {message: 'Lỗi kết nối', status: false });
                     }
                     else{
+                        console.log('test')
                         if(result){
-                            if(user.role == 'ADMIN'){
+                            if(user.RoleName == 'ADMIN'){
+                                console.log('test2')
                                 res.json({message: 'đăng nhập thành công', status: true, role: 'ADMIN', user: user});
+                                console.log('test3');
                             }
-                            if(user.role == ''){
+                            if(user.RoleName == 'USER'){
+                                res.json({message: 'đăng nhập thành công', status: true, role: 'USER', user: user});
+                                console.log('test4');
 
                             }
                         }
@@ -58,7 +64,18 @@ let register = (req, res) => {
     }
 }
 
+let test = (req, res) =>{
+    const {test, message} = req.body;
+    res.json({test: test, message: message});
+}
+
+let getUserInfor = (req, res) =>{
+    
+}
+
+
 module.exports = {
     login: login,
     register: register,
+    test: test,
 }

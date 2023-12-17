@@ -15,13 +15,13 @@ const config = {
 
 const db = new sql.ConnectionPool(config);
 
-db.connect((err)=>{
-    if(err){
-        console.error('Không thể kết nối đến cơ sở dữ liệu:', err);
-    }
-    else{
-        console.log('Kết nối thành công đến cơ sở dữ liệu');
-    }
-})
+const connectToDatabase = async () => {
+  try {
+    await db.connect();
+    console.log('Kết nối thành công đến cơ sở dữ liệu');
+  } catch (err) {
+    console.error('Không thể kết nối đến cơ sở dữ liệu:', err);
+  }
+};
 
-module.exports = db;
+module.exports = { sql, db, connectToDatabase };

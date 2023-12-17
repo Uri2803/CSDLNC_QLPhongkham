@@ -19,9 +19,7 @@ let login = (req, res) =>{
                         console.log('test')
                         if(result){
                             if(user.RoleName == 'ADMIN'){
-                                console.log('test2')
                                 res.json({message: 'đăng nhập thành công', status: true, role: 'ADMIN', user: user});
-                                console.log('test3');
                             }
                             if(user.RoleName == 'USER'){
                                 res.json({message: 'đăng nhập thành công', status: true, role: 'USER', user: user});

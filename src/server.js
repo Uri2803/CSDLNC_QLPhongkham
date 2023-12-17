@@ -1,6 +1,8 @@
 import express from "express";
 import ac from "./backend/account";
 import bodyParser, { BodyParser } from "body-parser";
+import cors from "cors";
+
 
 
 const app = express();
@@ -8,6 +10,7 @@ const port = 3000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true}));
+app.use(cors());
 
 app.get('/', (req, res) => {
   res.json({message: 'mainpage'});

@@ -64,6 +64,26 @@ let getUserInfor = async (userId, result) => {
     }
 };
 
+
+let updateUserInfor= async (user, result) =>{
+  try {
+    await connectToDatabase(); 
+    const request = db.request();
+    request.input('userId', sql.VarChar(5), userId);
+    const res = await request.query("EXEC ReadUserInfoByUserId @userId");
+    return result(null, res.recordset[0]);
+  } 
+  catch (err) {
+      console.log('err' +err);
+    return result(err, null);
+  } 
+  finally {
+    sql.close();
+  }
+
+  
+}
+
 module.exports = {
     findUser: findUser,
     creaateUser, creaateUser,

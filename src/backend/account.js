@@ -70,6 +70,15 @@ let test = (req, res) =>{
 }
 
 let getUserInfor = (req, res) =>{
+    const userId = req.body;
+    acc.getUserInfor(userId, (err, user) =>{
+        if(err){
+            res.json({message: 'lỗi kết nối', user: null });
+        }
+        else{
+            res.json({user:user});
+        }
+    });
     
 }
 
@@ -78,4 +87,5 @@ module.exports = {
     login: login,
     register: register,
     test: test,
+    getUserInfor: getUserInfor,
 }

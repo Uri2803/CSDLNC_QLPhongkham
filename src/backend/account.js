@@ -1,4 +1,4 @@
-import ac from "../database/account";
+import ac from "../database/connectDatabase/account";
 import bcrypt from "bcrypt";
 
 
@@ -17,12 +17,14 @@ let login = (req, res) =>{
                     }
                     else{
                         console.log('test')
+                        console.log(user);
+                        console.log(result);
                         if(result){
-                            if(user.RoleName == 'ADMIN'){
-                                res.json({message: 'đăng nhập thành công', status: true, role: 'ADMIN', user: user});
+                            if(user.RoleName == 'admin'){
+                                res.json({message: 'đăng nhập thành công', status: true, role: 'admin', user: user});
                             }
-                            if(user.RoleName == 'USER'){
-                                res.json({message: 'đăng nhập thành công', status: true, role: 'USER', user: user});
+                            if(user.RoleName == 'user'){
+                                res.json({message: 'đăng nhập thành công', status: true, role: 'user', user: user});
                                 console.log('test4');
 
                             }
@@ -69,16 +71,22 @@ let test = (req, res) =>{
 
 let getUserInfor = (req, res) =>{
     const {userId} = req.body;
-    console.log(userId);
-    ac.getUserInfor(userId, (err, user) =>{
-        if(err){
-            console.log(err);
-            res.json({message: 'lỗi kết nối', user: null, status: false });
-        }
-        else{
-            res.json({user:user, status: true});
-        }
-    });
+    if(userId){
+        ac.getUserInfor(userId, (err, user) =>{
+            if(err){
+                console.log(err);
+                res.json({message: 'lỗi kết nối', user: null, status: false });
+            }
+            else{
+                res.json({user:user, status: true});
+            }
+        });
+    }
+    else{
+        res.json({user:null, status: false});
+
+    }
+  
 }
 
 let updateUserInfor = (req, res) =>{

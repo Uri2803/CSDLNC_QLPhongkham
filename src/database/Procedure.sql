@@ -1,12 +1,3 @@
-
---read all user
-CREATE OR ALTER PROCEDURE ReadUser
-AS
-BEGIN
-    SELECT * FROM [USER];
-END;
-GO
-
 --find an user by username
 CREATE OR ALTER PROCEDURE GetUserByUsername
     @UserName NVARCHAR(20)
@@ -19,6 +10,60 @@ END;
 GO
 
 
+--read an userinfor by userId
+CREATE OR ALTER PROCEDURE ReadUserInfoByUserId
+    @UserID VARCHAR(5)
+AS
+BEGIN
+    SELECT *
+    FROM [USER_INFOR] UI
+    JOIN [USER] U ON  U.UserName = UI.UserName
+    JOIN [ROLE] R ON R.Role_ID = U.Role_ID
+    WHERE UI.User_ID = @UserID;
+END;
+GO
+
+--get all medicine info
+CREATE OR ALTER PROCEDURE GetMedicineInformation
+AS
+BEGIN
+    SELECT *
+    FROM [MEDICINE_WAREHOUSES];
+END;
+GO
+
+
+--get dentist's schedule by id
+CREATE OR ALTER PROCEDURE GetDoctorSchedule
+    @Dentist_ID VARCHAR(5)
+AS
+BEGIN
+    SELECT *
+    FROM [SCHEDULE] SD
+    JOIN [SHIFT] S ON S.Shift_ID = SD.Shift_ID
+    WHERE [Dentist_ID] = @Dentist_ID AND SD.[Status] = 0; 
+END;
+GO
+
+
+
+
+------------------------------------------------------------------------------
+
+
+
+
+--read all user
+CREATE OR ALTER PROCEDURE ReadUser
+AS
+BEGIN
+    SELECT * FROM [USER];
+END;
+GO
+
+
+
+
 --add an user
 CREATE OR ALTER PROCEDURE AddUser
     @UserName NVARCHAR(20),
@@ -29,6 +74,7 @@ AS
 BEGIN
     INSERT INTO [USER] ([UserName], [Password], [Email], [Role_ID])
     VALUES (@UserName, @Password, @Email, @Role_ID);
+    
 END;
 GO
 
@@ -82,6 +128,7 @@ GO
 
 --update an user info by username
 CREATE OR ALTER PROCEDURE UpdateUserInfo
+    @UserId VARCHAR(5),
     @UserName NVARCHAR(20),
     @NewFullName NVARCHAR(50),
     @NewBirthDay DATETIME,
@@ -89,10 +136,10 @@ CREATE OR ALTER PROCEDURE UpdateUserInfo
 AS
 BEGIN
     DECLARE @NewAge INT
-    SET @NewAge = DATEDIFF(YEAR, @BirthDay, GETDATE())
+    SET @NewAge = DATEDIFF(YEAR, @NewBirthDay, GETDATE())
     UPDATE [USER_INFOR]
     SET [FullName] = @NewFullName, [BirthDay] = @NewBirthDay, [Sex] = @NewSex, [Age] = @NewAge
-    WHERE [UserName] = @UserName;
+    WHERE [USER_ID] = @UserId;
 END;
 GO
 
@@ -116,6 +163,7 @@ BEGIN
 END;
 GO
 
+
 --get dentist's schedule by id
 CREATE OR ALTER PROCEDURE GetDoctorSchedule
     @Dentist_ID VARCHAR(5)
@@ -127,14 +175,6 @@ BEGIN
 END;
 GO
 
---get all medicine info
-CREATE OR ALTER PROCEDURE GetMedicineInformation
-AS
-BEGIN
-    SELECT *
-    FROM [MEDICINE_WAREHOUSES];
-END;
-GO
 
 --find medicine by name
 CREATE OR ALTER PROCEDURE GetMedicineByName

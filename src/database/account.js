@@ -80,8 +80,6 @@ let updateUserInfor= async (user, result) =>{
   finally {
     sql.close();
   }
-
-  
 }
 
 module.exports = {

@@ -1,22 +1,4 @@
-﻿-- --Trigger kiểm tra việc thêm thông tin người dùng mới
--- --Mục đích: Kiểm tra và thêm thông tin vào bảng USER_INFOR khi có một người dùng mới được thêm vào bảng USER.
-
--- CREATE OR ALTER TRIGGER trg_AddUserInfoOnNewUser
--- ON [USER]
--- AFTER INSERT
--- AS
--- BEGIN
---     SET NOCOUNT ON;
---     INSERT INTO USER_INFOR (User_ID, UserName)
---     SELECT i.UserName, i.UserName
---     FROM INSERTED i
---     LEFT JOIN USER_INFOR ui ON i.UserName = ui.UserName
---     WHERE ui.User_ID IS NULL; -- Chỉ thêm nếu người dùng chưa có thông tin trong USER_INFOR
--- END;
--- GO
-
-
---Trigger xóa thông tin người dùng:
+﻿--Trigger xóa thông tin người dùng:
 --Mục đích: Xóa thông tin người dùng tương ứng từ bảng USER_INFOR khi một người dùng bị xóa khỏi bảng USER.
 
 CREATE OR ALTER TRIGGER trg_delete_user_info

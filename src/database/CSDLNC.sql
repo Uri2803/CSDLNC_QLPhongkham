@@ -20,9 +20,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE [ROLE] (
-  [Role_ID] VARCHAR(5) PRIMARY KEY,
+  [Role_ID] INT PRIMARY KEY,
   [RoleName] NVARCHAR(20),
-  [RoleDescription] TEXT
+  [RoleDescription] NVARCHAR(100)
 )
 GO
 
@@ -30,7 +30,7 @@ CREATE TABLE [USER] (
   [UserName] NVARCHAR(20) PRIMARY KEY,
   [Password] VARCHAR(150),
   [Email] VARCHAR(50),
-  [Role_ID] VARCHAR(5)
+  [Role_ID] INT
 )
 GO
 

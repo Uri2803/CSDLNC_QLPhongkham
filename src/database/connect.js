@@ -5,7 +5,7 @@ const config = {
     password: 'MinQuan@',
     server: 'localhost',
     port: 1433,
-    database: 'QLPKNK',
+    database: 'DENTAL',
     options: {
         encrypt: true,
         trustServerCertificate: true, 

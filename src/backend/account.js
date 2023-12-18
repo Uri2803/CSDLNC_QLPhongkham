@@ -1,4 +1,4 @@
-import ac from "../database/account";
+import ac from "../database/connectDatabase/account";
 import bcrypt from "bcrypt";
 
 

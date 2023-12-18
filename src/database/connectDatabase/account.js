@@ -1,4 +1,4 @@
-const { sql, db, connectToDatabase } = require('./connect');
+const { sql, db, connectToDatabase } = require('../connect');
 
 let findUser = async (username, result) => {
   try {
@@ -81,8 +81,9 @@ let updateUserInfor= async (user, result) =>{
     sql.close();
   }
 
-  
 }
+
+
 
 module.exports = {
     findUser: findUser,

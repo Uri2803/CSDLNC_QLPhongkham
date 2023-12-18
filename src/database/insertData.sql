@@ -25,4 +25,17 @@ VALUES
 
 
 
+---
+INSERT INTO [ROLE]
+VALUES
+  (1, 'user', 'Tài khoản người dùng'),
+  (2, 'admin', 'Tài khoản quản trị viên'),
+  (3, 'doctor', ' Tài khoản nha sĩ'),
+  (4, 'staft', 'Tài khoản cho nhân viên');
 
+INSERT INTO [USER]
+VALUES
+  ('minhquang', '$2b$10$C0Fw2PUDfrU3KIqkeP0ZMe9aV1CORlv2kpYqF.FA0s2alZF2gDj3a', 'huynhminhquang@gmail.com', 1),
+  ('admin', '$2b$10$C0Fw2PUDfrU3KIqkeP0ZMe9aV1CORlv2kpYqF.FA0s2alZF2gDj3a', 'admin@gmail.com', 2),
+  ('doctor', '$2b$10$C0Fw2PUDfrU3KIqkeP0ZMe9aV1CORlv2kpYqF.FA0s2alZF2gDj3a', 'doctor@gmail.com', 3),
+  ('staft', '$2b$10$C0Fw2PUDfrU3KIqkeP0ZMe9aV1CORlv2kpYqF.FA0s2alZF2gDj3a', 'staft@gmail.com', 4)

@@ -1,3 +1,5 @@
+USE DENTAL
+
 --find an user by username
 CREATE OR ALTER PROCEDURE GetUserByUsername
     @UserName NVARCHAR(20)
@@ -42,6 +44,54 @@ BEGIN
     FROM [SCHEDULE] SD
     JOIN [SHIFT] S ON S.Shift_ID = SD.Shift_ID
     WHERE [Dentist_ID] = @Dentist_ID AND SD.[Status] = 0; 
+END;
+GO
+
+--add an user
+CREATE OR ALTER PROCEDURE AddUser
+    @UserName NVARCHAR(20),
+    @Password VARCHAR(300),
+    @Email VARCHAR(50),
+    @Role_ID CHAR(5)
+AS
+BEGIN
+    INSERT INTO [USER] ([UserName], [Password], [Email], [Role_ID])
+    VALUES (@UserName, @Password, @Email, @Role_ID);
+    DECLARE @ID VARCHAR(5);
+    IF @Role_ID = 1 
+    BEGIN
+        SET @ID = 'U' + RIGHT('0000' + CAST((SELECT COUNT(*) FROM [USER_INFOR] WHERE [USER_ID] LIKE 'U%') + 1 AS NVARCHAR(4)), 4);
+        INSERT INTO [USER_INFOR] (User_ID)
+        VALUES (@ID);
+        INSERT INTO [CUSTOMER_INFROR] ([Customer_ID])
+        VALUES (@ID);
+    END
+    IF @Role_ID = 2
+    BEGIN
+        SET @ID = 'A' + RIGHT('0000' + CAST((SELECT COUNT(*) FROM [USER_INFOR] WHERE [USER_ID] LIKE 'C%') + 1 AS NVARCHAR(4)), 4);
+        INSERT INTO [USER_INFOR] (User_ID)
+        VALUES (@ID);
+        INSERT INTO [CLINIC_STAFF] ([Staff_ID], [Postition_ID])
+        VALUES (@ID, 2);
+    END
+    IF @Role_ID = 3
+    BEGIN
+        SET @ID = 'D' + RIGHT('0000' + CAST((SELECT COUNT(*) FROM [USER_INFOR] WHERE [USER_ID] LIKE 'C%') + 1 AS NVARCHAR(4)), 4);
+        INSERT INTO [USER_INFOR] (User_ID)
+        VALUES (@ID);
+        INSERT INTO [CLINIC_STAFF] ([Staff_ID], [Postition_ID])
+        VALUES (@ID, 3);
+        INSERT INTO [DENTIST] (Dentist_ID)
+        VALUES (@ID);
+    END
+    IF @Role_ID = 4
+    BEGIN
+        SET @ID = 'S' + RIGHT('0000' + CAST((SELECT COUNT(*) FROM [USER_INFOR] WHERE [USER_ID] LIKE 'S%') + 1 AS NVARCHAR(4)), 4);
+        INSERT INTO [USER_INFOR] (User_ID)
+        VALUES (@ID);
+        INSERT INTO [CLINIC_STAFF] ([Staff_ID], [Postition_ID])
+        VALUES (@ID, 1);  
+    END
 END;
 GO
 

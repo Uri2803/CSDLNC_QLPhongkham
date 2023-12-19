@@ -40,14 +40,41 @@ VALUES
   (2, 'Quản trị viên'),
   (3, 'Nha sĩ');
 
-INSERT INTO [USER]
-VALUES
-  ('minhquang', '$2b$10$C0Fw2PUDfrU3KIqkeP0ZMe9aV1CORlv2kpYqF.FA0s2alZF2gDj3a', 'huynhminhquang@gmail.com', 1),
-  ('admin', '$2b$10$C0Fw2PUDfrU3KIqkeP0ZMe9aV1CORlv2kpYqF.FA0s2alZF2gDj3a', 'admin@gmail.com', 2),
-  ('doctor', '$2b$10$C0Fw2PUDfrU3KIqkeP0ZMe9aV1CORlv2kpYqF.FA0s2alZF2gDj3a', 'doctor@gmail.com', 3),
-  ('staft', '$2b$10$C0Fw2PUDfrU3KIqkeP0ZMe9aV1CORlv2kpYqF.FA0s2alZF2gDj3a', 'staft@gmail.com', 4)
-
 EXECUTE AddUser 'minhquang', '$2b$10$C0Fw2PUDfrU3KIqkeP0ZMe9aV1CORlv2kpYqF.FA0s2alZF2gDj3a', 'huynhminhquang@gmail.com', 1;
 EXECUTE AddUser 'admin', '$2b$10$C0Fw2PUDfrU3KIqkeP0ZMe9aV1CORlv2kpYqF.FA0s2alZF2gDj3a', 'admin@gmail.com', 2;
 EXECUTE AddUser 'doctor', '$2b$10$C0Fw2PUDfrU3KIqkeP0ZMe9aV1CORlv2kpYqF.FA0s2alZF2gDj3a', 'doctor@gmail.com', 3;
 EXECUTE AddUser 'staft', '$2b$10$C0Fw2PUDfrU3KIqkeP0ZMe9aV1CORlv2kpYqF.FA0s2alZF2gDj3a', 'staft@gmail.com', 4;
+
+--innser shift 
+DECLARE @StartTime TIME = '07:00';
+DECLARE @ShiftID INT = 1;
+--- Thời gian bắt đầu buổi sáng 7h30
+SET @StartTime = '07:30';
+WHILE @StartTime < '11:00'
+BEGIN
+  INSERT INTO [SHIFT] ([Shift_ID], [Time_Frame])
+  VALUES (@ShiftID, CONVERT(VARCHAR(5), @StartTime) + ' - ' + CONVERT(VARCHAR(5), DATEADD(MINUTE, 30, @StartTime)));
+  SET @ShiftID = @ShiftID + 1;
+  SET @StartTime = DATEADD(MINUTE, 30, @StartTime);
+END;
+
+--Thời gian bắt đầu từ chiều 1h30
+SET @StartTime = '13:30';
+WHILE @StartTime < '16:00'
+BEGIN
+  INSERT INTO [SHIFT] ([Shift_ID], [Time_Frame])
+  VALUES (@ShiftID, CONVERT(VARCHAR(5), @StartTime) + ' - ' + CONVERT(VARCHAR(5), DATEADD(MINUTE, 30, @StartTime)));
+  SET @ShiftID = @ShiftID + 1;
+  SET @StartTime = DATEADD(MINUTE, 30, @StartTime);
+END;
+
+--Thời gian bắt đầu buổi tối 
+SET @StartTime = '18:00';
+WHILE @StartTime < '20:30'
+BEGIN
+  INSERT INTO [SHIFT] ([Shift_ID], [Time_Frame])
+  VALUES (@ShiftID, CONVERT(VARCHAR(5), @StartTime) + ' - ' + CONVERT(VARCHAR(5), DATEADD(MINUTE, 30, @StartTime)));
+  SET @ShiftID = @ShiftID + 1;
+  SET @StartTime = DATEADD(MINUTE, 30, @StartTime);
+END;
+

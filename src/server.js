@@ -22,9 +22,9 @@ app.post('/test', ac.test);
 
 app.post('/login', ac.login);
 
-app.post('/register', ac.register);
+app.post('user/register', ac.register);
 
-app.post('/getallmedicine', admin.getAllMedicine);
+app.post('admin/getallmedicine', admin.getAllMedicine); 
 
 //app.get('/customer/appointment');
 

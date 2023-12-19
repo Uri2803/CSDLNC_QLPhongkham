@@ -69,7 +69,7 @@ CREATE TABLE [CLINIC_STAFF] (
 GO
 
 CREATE TABLE [SHIFT] (
-  [Shift_ID] VARCHAR(5) PRIMARY KEY,
+  [Shift_ID] INT PRIMARY KEY,
   [Time_Frame] VARCHAR(15)
 )
 GO
@@ -78,7 +78,7 @@ CREATE TABLE [SCHEDULE] (
   [Schedule_ID] VARCHAR(5),
   [Day] DATETIME,
   [Dentist_ID] VARCHAR(5),
-  [Shift_ID] VARCHAR(5),
+  [Shift_ID] INT,
   [Status] BIT,
   PRIMARY KEY ([Schedule_ID], [Day])
 )

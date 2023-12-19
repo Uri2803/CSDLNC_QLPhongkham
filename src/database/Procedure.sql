@@ -61,24 +61,24 @@ BEGIN
     IF @Role_ID = 1 
     BEGIN
         SET @ID = 'U' + RIGHT('0000' + CAST((SELECT COUNT(*) FROM [USER_INFOR] WHERE [USER_ID] LIKE 'U%') + 1 AS NVARCHAR(4)), 4);
-        INSERT INTO [USER_INFOR] (User_ID)
-        VALUES (@ID);
+        INSERT INTO [USER_INFOR] (User_ID, UserName)
+        VALUES (@ID, @UserName);
         INSERT INTO [CUSTOMER_INFROR] ([Customer_ID])
         VALUES (@ID);
     END
     IF @Role_ID = 2
     BEGIN
         SET @ID = 'A' + RIGHT('0000' + CAST((SELECT COUNT(*) FROM [USER_INFOR] WHERE [USER_ID] LIKE 'C%') + 1 AS NVARCHAR(4)), 4);
-        INSERT INTO [USER_INFOR] (User_ID)
-        VALUES (@ID);
+        INSERT INTO [USER_INFOR] (User_ID, UserName)
+        VALUES (@ID, @UserName);
         INSERT INTO [CLINIC_STAFF] ([Staff_ID], [Postition_ID])
         VALUES (@ID, 2);
     END
     IF @Role_ID = 3
     BEGIN
         SET @ID = 'D' + RIGHT('0000' + CAST((SELECT COUNT(*) FROM [USER_INFOR] WHERE [USER_ID] LIKE 'C%') + 1 AS NVARCHAR(4)), 4);
-        INSERT INTO [USER_INFOR] (User_ID)
-        VALUES (@ID);
+        INSERT INTO [USER_INFOR] (User_ID, UserName)
+        VALUES (@ID, @UserName);
         INSERT INTO [CLINIC_STAFF] ([Staff_ID], [Postition_ID])
         VALUES (@ID, 3);
         INSERT INTO [DENTIST] (Dentist_ID)
@@ -87,14 +87,97 @@ BEGIN
     IF @Role_ID = 4
     BEGIN
         SET @ID = 'S' + RIGHT('0000' + CAST((SELECT COUNT(*) FROM [USER_INFOR] WHERE [USER_ID] LIKE 'S%') + 1 AS NVARCHAR(4)), 4);
-        INSERT INTO [USER_INFOR] (User_ID)
-        VALUES (@ID);
+        INSERT INTO [USER_INFOR] (User_ID, UserName)
+        VALUES (@ID, @UserName);
         INSERT INTO [CLINIC_STAFF] ([Staff_ID], [Postition_ID])
         VALUES (@ID, 1);  
     END
 END;
 GO
 
+
+CREATE OR ALTER PROCEDURE MakeAppointment
+    @Customer_ID VARCHAR(5),
+    @Dentist_ID VARCHAR(5),
+    @Date DATE,
+    @Ship_ID INT
+AS
+BEGIN
+    DECLARE @SdID VARCHAR(5);
+    DECLARE @ID VARCHAR(5);
+    DECLARE @KT BIT;
+    DECLARE @Month VARCHAR(2);
+    SELECT @SdID = SD.Schedule_ID
+    FROM [SCHEDULE] SD
+    JOIN [SHIFT] S ON S.Shift_ID = @Ship_ID
+    WHERE SD.[Day] = @Date;
+    SELECT @KT = [Status] FROM [SCHEDULE] WHERE [Schedule_ID] = @SdID
+    IF @KT = 1
+        RETURN -1; 
+    ELSE
+    BEGIN
+        UPDATE [SCHEDULE]
+        SET [Status] = 1
+        WHERE [Schedule_ID] = @SdID;
+        SET @Month = MONTH(GETDATE());
+        SET @ID = @Month +'T' + RIGHT('000' + CAST((SELECT COUNT(*) FROM [APPOINTMENT] WHERE MONTH(@Date) = @Month) + 1 AS VARCHAR(3)), 3);
+        INSERT INTO [APPOINTMENT] ([Appointment_ID], [Customer_ID], Schedule_ID, [Day])
+        VALUES (@ID, @Customer_ID, @SdID, @Date);
+        RETURN 1;
+    END
+END;
+GO
+
+
+
+
+CREATE OR ALTER PROCEDURE AddSchedule
+AS
+BEGIN
+    DECLARE @StartDate DATE = GETDATE(); 
+    DECLARE @EndDate DATE = DATEADD(DAY, 7, @StartDate);
+    DECLARE @DentistCursor CURSOR;
+    SET @DentistCursor = CURSOR FOR SELECT [Dentist_ID] FROM [DENTIST];
+    OPEN @DentistCursor;
+    FETCH NEXT FROM @DentistCursor INTO @Dentist_ID;
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        DECLARE @CurrentDate DATETIME = @StartDate;
+
+        WHILE @CurrentDate < @EndDate
+        BEGIN
+            DECLARE @IDSD VARCHAR(5);
+            SET @IDSD = 'SD' + RIGHT('000' + CAST((SELECT COUNT(*) FROM [SCHEDULE] WHERE [DAY] = @CurrentDate) + 1 AS VARCHAR(3)), 3);
+
+            -- Kiểm tra xem lịch đã tồn tại hay chưa
+            IF NOT EXISTS (SELECT 1 FROM [SCHEDULE] WHERE [Schedule_ID] = @IDSD AND [Day] = @CurrentDate)
+            BEGIN
+                DECLARE @ShiftCursor CURSOR;
+                SET @ShiftCursor = CURSOR FOR SELECT [Shift_ID] FROM [SHIFT];
+
+                OPEN @ShiftCursor;
+                FETCH NEXT FROM @ShiftCursor INTO @Shift_ID;
+
+                WHILE @@FETCH_STATUS = 0
+                BEGIN
+                    INSERT INTO [SCHEDULE] ([Schedule_ID], [Day], [Dentist_ID], [Shift_ID], [Status])
+                    VALUES (@IDSD , @CurrentDate, @Dentist_ID, @Shift_ID, 0); 
+
+                    FETCH NEXT FROM @ShiftCursor INTO @Shift_ID;
+                END
+
+                CLOSE @ShiftCursor;
+                DEALLOCATE @ShiftCursor;
+            SET @CurrentDate = DATEADD(DAY, 1, @CurrentDate);
+        END
+
+        FETCH NEXT FROM @DentistCursor INTO @Dentist_ID;
+    END
+
+    CLOSE @DentistCursor;
+    DEALLOCATE @DentistCursor;
+
+END;
 
 
 
@@ -112,21 +195,6 @@ END;
 GO
 
 
-
-
---add an user
-CREATE OR ALTER PROCEDURE AddUser
-    @UserName NVARCHAR(20),
-    @Password VARCHAR(300),
-    @Email VARCHAR(50),
-    @Role_ID CHAR(5)
-AS
-BEGIN
-    INSERT INTO [USER] ([UserName], [Password], [Email], [Role_ID])
-    VALUES (@UserName, @Password, @Email, @Role_ID);
-    
-END;
-GO
 
 
 --update an user by username

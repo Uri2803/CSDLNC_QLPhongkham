@@ -17,33 +17,31 @@ let findUser = async (username, result) => {
 };
 
 let creaateUser = (user, result) =>{
-    bcrypt.hash(user.password, 10, (err, pass)=> {
+      bcrypt.hash(user.password, 10, async (err, pass) => {
         if(err){
             result(err, err);
         }
         else{
-            sql.query("CALL CREATE_USER (?, ?, ?, @err)", [ac.new_username, pass, ac.mail], (err, message) =>{
-                if(err){
-                    result(err, err);
-                }
-                else{
-                    result(null, "Đã thêm vào csdl");
-                }
-            });
+          try {
+            await connectToDatabase(); 
+            const request = db.request();
+            request.input('UserName', sql.NVARCHAR(20), user.username);
+            request.input('Password', sql.VARCHAR(300), user.password);
+            request.input('Email', sql. VARCHAR(50), user.mail);
+            request.input('Role_ID', sql.INT, 1);
+            const res = await request.query("AddUser ReadUserInfoByUserId @UserName, @Password, @Email, @Role_ID ");
+            return result(null, res.recordset[0]);
+          } 
+          catch (err) {
+              console.log('err' +err);
+            return result(err, null);
+          } 
+          finally {
+            sql.close();
+          }
         }
         return;
     });
-
-    sql.query(" CALL CREATE_USER(?, ?, ?, ?)", [user.username, user.password, user.mail, 1], (err, messsage)=>{
-        if(err){
-            messsage = 'Lỗi kết nối';
-            result(err, messsage);
-        }
-        else{
-            messsage = 'Đăng kí tài khoản thành công';
-            result(null, messsage);
-        }
-    })
 }
 
 

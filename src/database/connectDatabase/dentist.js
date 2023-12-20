@@ -34,7 +34,6 @@ let addSchedule = async (scd, result) =>{
      return result(null, 'Đã thêm lịch thành công');
   } 
   catch (err) {
-    console.log(err);
     return result(err, 'Lỗi kết nối');
   } 
   finally {

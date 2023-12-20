@@ -13,6 +13,49 @@ BEGIN
 END;
 GO
 
+
+
+--Update userinfor
+
+--update an user by username
+CREATE OR ALTER PROCEDURE UpdateUserInfor
+    @User_ID NVARCHAR(20),
+    @FullName NVARCHAR(70),
+    @BirthDay DATE,
+    @Sex NVARCHAR(3), 
+    @Mail VARCHAR(50),
+    @Address NVARCHAR(100),
+    @Phone CHAR(10),
+    @Banking VARCHAR(20)
+AS
+BEGIN
+    IF EXISTS  (SELECT * FROM [USER_INFOR] WHERE [USER_ID] =@User_ID)
+        RAISERROR('Không tồn tại User', 16,1);
+        RETURN;
+    DECLARE @Username NVARCHAR(20);
+    SELECT @Username = UI.UserName FROM [USER_INFOR] UI WHERE UI.[USER_ID] =@User_ID;
+
+    DECLARE @age INT = DATEDIFF(YEAR, @BirthDay, GETDATE());
+
+    UPDATE [USER_INFOR]
+    SET 
+    [FullName] = @FullName, 
+    [BirthDay] = @BirthDay, 
+    [Sex] = @Sex,
+    [Age] = @age,
+    [Address] = @Address, 
+    [Phone] =@Phone, 
+    [Banking] = @Banking
+    WHERE [USER_ID] = @User_ID;
+
+    UPDATE [USER]
+    SET [Email] = @Mail
+    WHERE [UserName] = @Username;
+END;
+GO
+
+
+
 --read an userinfor by userId
 CREATE OR ALTER PROCEDURE ReadUserInfoByUserId
     @UserID VARCHAR(5)
@@ -202,8 +245,8 @@ BEGIN
     WHERE AP.Customer_ID = @Customer_ID;
 END;
 
-
-------------------------------------------------------------------------------
+------------------------------------------------XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX----------------------------------------------------------
+------------------------------------------------XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX----------------------------------------------------------
 
 
 
@@ -215,9 +258,6 @@ BEGIN
     SELECT * FROM [USER];
 END;
 GO
-
-
-
 
 --update an user by username
 CREATE OR ALTER PROCEDURE UpdateUser
@@ -269,25 +309,7 @@ BEGIN
 END
 GO
 
---update an user info by username
-CREATE OR ALTER PROCEDURE UpdateUserInfo
-    @UserId VARCHAR(5),
-    @UserName NVARCHAR(20),
-    @NewFullName NVARCHAR(50),
-    @NewBirthDay DATETIME,
-    @NewSex NVARCHAR(3),
-    @NewAddress VARCHAR(100),
-    @NewPhone CHAR(10),
-    @NewBanking NVARCHAR(20)
-AS
-BEGIN
-    DECLARE @NewAge INT
-    SET @NewAge = DATEDIFF(YEAR, @NewBirthDay, GETDATE())
-    UPDATE [USER_INFOR]
-    SET [FullName] = @NewFullName, [BirthDay] = @NewBirthDay, [Sex] = @NewSex, [Age] = @NewAge, [Address] = @NewAddress, [Phone] = @NewPhone, [Banking] = @NewBanking
-    WHERE [USER_ID] = @UserId;
-END;
-GO
+
 
 --delete an user info by username
 CREATE OR ALTER PROCEDURE DeleteUserInfo

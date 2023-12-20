@@ -55,7 +55,6 @@ let getUserInfor = async (userId, result) => {
       return result(null, res.recordset[0]);
     } 
     catch (err) {
-        console.log('err' +err);
       return result(err, null);
     } 
     finally {
@@ -64,17 +63,23 @@ let getUserInfor = async (userId, result) => {
 };
 
 
-let updateUserInfor= async (user, result) =>{
+let updateUserInfor= async (userInf, result) =>{
   try {
     await connectToDatabase(); 
     const request = db.request();
-    request.input('userId', sql.VarChar(5), userId);
-    const res = await request.query("EXEC UpdateUserInfo @UserId, @UserName ,@NewFullName ,@NewBirthDay ,@NewSex)");
-    return result(null, res.recordset[0]);
+    request.input('User_ID', sql.VarChar(5), userInf.userID);
+    request.input('FullName', sql.NVarChar(70), userInf.fullName);
+    request.input('BirthDay', sql.DATE, userInf.birthday);
+    request.input('Sex', sql.NVarChar(3), userInf.sex);
+    request.input('Mail', sql.VarChar(50), userInf.mail);
+    request.input('Address', sql.NVarChar(100), userInf.address);
+    request.input('Phone', sql.CHAR(10), userInf.phone);
+    request.input('Banking', sql.VarChar(20), userInf.banking);
+    await request.query("EXEC UpdateUserInfor @User_ID, @FullName, @BirthDay, @Sex, @Mail, @Address, @Phone, @Banking");
+    return result(null, ' Đã cập nhật thông tin');
   } 
   catch (err) {
-      console.log('err' +err);
-    return result(err, null);
+    return result(err, 'Lỗi kết nối');
   } 
   finally {
     sql.close();
@@ -87,4 +92,5 @@ module.exports = {
     findUser: findUser,
     creaateUser, creaateUser,
     getUserInfor: getUserInfor,
+    updateUserInfor: updateUserInfor,
 }

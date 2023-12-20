@@ -86,10 +86,24 @@ let getUserInfor = (req, res) =>{
 }
 
 let updateUserInfor = (req, res) =>{
-    const {userId, fullName, brirthday, sex, mail } = req.body;
-    ac.updateUserInfor();
-    //UI.User_ID, UI.FullName, UI.UserName, UI.BirthDay, UI.Age, UI.Sex, U.Email, R.RoleName, R.RoleDescription 
+    const {userID, fullName, birthday, sex, mail, address, phone, banking } = req.body;
+    if(userID && fullName && birthday && sex && mail && address && phone && banking ){
+        const userInf ={userID, fullName, birthday, sex, mail, address, phone, banking };
 
+        ac.updateUserInfor(userInf, (err, message)=>{
+            if(err){
+                res.json({status: false, message:message});
+            }
+            else{
+                res.json({status: true, message:message});
+            }
+        });
+
+    }
+    else{
+        res.json({status: false, message: 'Lỗi thông tin'});
+    }
+    
 }
 
 
@@ -98,4 +112,5 @@ module.exports = {
     register: register,
     test: test,
     getUserInfor: getUserInfor,
+    updateUserInfor:updateUserInfor,
 }

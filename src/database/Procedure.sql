@@ -99,10 +99,6 @@ BEGIN
 END;
 GO
 
-
-
-
-
 --add an user
 CREATE OR ALTER PROCEDURE AddUser
     @UserName NVARCHAR(20),
@@ -172,6 +168,10 @@ BEGIN
         RETURN -1; 
     ELSE
     BEGIN
+        DECLARE @MR_ID VARCHAR(5);
+        SET @MR_ID = 'MR' + RIGHT('0000' + CAST((SELECT COUNT(*) FROM [MEDICAL_RECORD]) + 1 AS NVARCHAR(3)), 3);
+        INSERT INTO [MEDICAL_RECORD] ([Medical_ID], [Customer_ID], [DentistResponsible], [Day])
+        VALUES (@MR_ID, @Customer_ID, @Dentist_ID, @Date);
         UPDATE [SCHEDULE]
         SET [Status] = 1
         WHERE [Schedule_ID] = @SdID;
@@ -183,10 +183,6 @@ BEGIN
     END
 END;
 GO
-
-
-
-
 
 
 ------------------------------------------------------------------------------

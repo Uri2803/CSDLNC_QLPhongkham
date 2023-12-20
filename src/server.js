@@ -3,7 +3,7 @@ import ac from "./backend/account";
 import bodyParser, { BodyParser } from "body-parser";
 import cors from "cors";
 import admin from "./backend/admin";
-import dentist from "./backend/dentist"
+import dentist from "./backend/dentist";
 import cus from "./backend/customer";
 
 
@@ -33,7 +33,9 @@ app.post('/addschedule', dentist.addSchedule); // dentistID, day
 
 app.post('/getscheduledentist', dentist.getDentistSchedule); // dentistID, day
 
-app.post('/makeapoiment', cus.makeApoiment); // customerID, dentistID, day, shipftID
+app.post('/makeappoiment', cus.makeAppoiment ); // customerID, dentistID, day, shipftID
+
+app.post('/getappoimentcard', cus.getAppoimentCard) //customerID
 
 
 //app.get('/customer/appointment');

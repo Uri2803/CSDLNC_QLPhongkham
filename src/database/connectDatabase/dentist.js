@@ -27,11 +27,7 @@ let addSchedule = async (scd, result) =>{
     request.input('DentistID', sql.VarChar(5), scd.dentistID);
     request.input('Day', sql.DATE, scd.day);
     const res = await request.query("EXEC AddDentistSchedule @DentistID, @Day");
-   
-    if (res.returnValue = -1)
-      return result(null, 'Đã tồn tại lịch cho bác sĩ');
-    else
-     return result(null, 'Đã thêm lịch thành công');
+    return result(null, 'Đã thêm lịch thành công');
   } 
   catch (err) {
     return result(err, 'Lỗi kết nối');

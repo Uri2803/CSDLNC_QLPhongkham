@@ -73,7 +73,7 @@ BEGIN
     DECLARE @ScheduleID VARCHAR(5);
     DECLARE @s_shift INT = 1;
     IF EXISTS (SELECT * FROM [SCHEDULE] WHERE [Day] = @Day AND [Dentist_ID] = @DentistID)
-        RETURN -1;
+       RAISERROR('Lịch đã tồn tại', 16, 1);
     ELSE 
         WHILE @s_shift < 18
         BEGIN 
@@ -161,11 +161,15 @@ BEGIN
     DECLARE @Month VARCHAR(2);
     SELECT @SdID = SD.Schedule_ID
     FROM [SCHEDULE] SD
-    JOIN [SHIFT] S ON S.Shift_ID = @Ship_ID
-    WHERE SD.[Day] = @Date;
+    JOIN [SHIFT] S ON S.Shift_ID = SD.Shift_ID
+    WHERE SD.[Day] = @Date AND S.Shift_ID = @Ship_ID;
+
     SELECT @KT = [Status] FROM [SCHEDULE] WHERE [Schedule_ID] = @SdID
     IF @KT = 1
-        RETURN -1; 
+    BEGIN
+       RAISERROR('Lịch không còn trống', 16,1);
+       RETURN;
+    END
     ELSE
     BEGIN
         DECLARE @MR_ID VARCHAR(5);
@@ -179,10 +183,24 @@ BEGIN
         SET @ID = @Month +'T' + RIGHT('000' + CAST((SELECT COUNT(*) FROM [APPOINTMENT] WHERE MONTH(@Date) = @Month) + 1 AS VARCHAR(3)), 3);
         INSERT INTO [APPOINTMENT] ([Appointment_ID], [Customer_ID], Schedule_ID, [Day])
         VALUES (@ID, @Customer_ID, @SdID, @Date);
-        RETURN 1;
+        RETURN;
     END
 END;
 GO
+
+
+CREATE OR ALTER PROCEDURE GetAppointmentCard
+    @Customer_ID VARCHAR(5)
+AS
+BEGIN
+    SELECT C.*, D.FullName AS 'Dentist', SD.[Day], S.Shift_ID AS 'STT', S.Time_Frame 'Time'
+    FROM [APPOINTMENT] AP 
+    JOIN [USER_INFOR] C ON C.User_ID = AP.Customer_ID
+    JOIN [SCHEDULE] SD ON SD.Schedule_ID = AP.Schedule_ID
+    JOIN [SHIFT] S ON S.Shift_ID = SD.Shift_ID
+    JOIN [USER_INFOR] D ON D.User_ID = SD.Dentist_ID
+    WHERE AP.Customer_ID = @Customer_ID;
+END;
 
 
 ------------------------------------------------------------------------------

@@ -6,6 +6,7 @@ let findUser = async (username, result) => {
     const request = db.request();
     request.input('UserName', sql.NVarChar(20), username);
     const res = await request.query("EXEC GetUserByUsername @UserName");
+    console.log(res);
     return result(null, res.recordset[0]);
   } 
   catch (err) {

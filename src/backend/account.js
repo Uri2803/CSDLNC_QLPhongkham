@@ -3,7 +3,6 @@ import bcrypt from "bcrypt";
 
 
 let login = (req, res) =>{
-    console.log(req.body);
     const {username, password} = req.body;
     if(username, password){
         ac.findUser(username, (err, user) =>{
@@ -16,9 +15,6 @@ let login = (req, res) =>{
                         res.json( {message: 'Lỗi kết nối', status: false });
                     }
                     else{
-                        console.log('test')
-                        console.log(user);
-                        console.log(result);
                         if(result){
                             if(user.RoleName == 'admin'){
                                 res.json({message: 'đăng nhập thành công', status: true, role: 'admin', user: user});

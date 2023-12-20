@@ -5,25 +5,55 @@ CREATE OR ALTER PROCEDURE GetUserByUsername
     @UserName NVARCHAR(20)
 AS
 BEGIN
-    SELECT UI.User_ID, UI.UserName, [Password], [Email], [RoleName], [Address], [Phone], [Banking]
-    FROM [USER] U JOIN [ROLE] R ON U.Role_ID = R.Role_ID JOIN [USER_INFOR] UI ON  UI.UserName = U.UserName
-    WHERE UI.UserName = @UserName;
+    SELECT  UI.[User_ID], U.UserName, U.[Password], U.Email, R.Role_ID, R.RoleName
+    FROM [USER] U 
+    JOIN [ROLE] R ON U.Role_ID = R.Role_ID 
+    JOIN [USER_INFOR] UI ON  UI.UserName = U.UserName
+    WHERE U.UserName = @UserName;
 END;
 GO
-
 
 --read an userinfor by userId
 CREATE OR ALTER PROCEDURE ReadUserInfoByUserId
     @UserID VARCHAR(5)
 AS
 BEGIN
-    SELECT *
-    FROM [USER_INFOR] UI
-    JOIN [USER] U ON  U.UserName = UI.UserName
-    JOIN [ROLE] R ON R.Role_ID = U.Role_ID
-    WHERE UI.User_ID = @UserID;
+    DECLARE @role INT;
+    SELECT @role = U.Role_ID
+    FROM [USER_INFOR] UI 
+    JOIN [USER] U ON U.UserName = UI.UserName
+    WHERE UI.[USER_ID] = @UserID;
+
+    IF @role = 1 --usser
+    BEGIN
+        SELECT U.Role_ID, UI.*, CI.*
+        FROM [USER] U
+        JOIN [USER_INFOR] UI ON UI.UserName = U.UserName
+        JOIN [CUSTOMER_INFROR] CI ON CI.Customer_ID = UI.User_ID
+        WHERE UI.User_ID = @UserID;
+    END 
+
+    IF @role = 2 OR @role = 4 -- staft, admin
+    BEGIN
+        SELECT U.Role_ID, UI.*, CS.*
+        FROM [USER] U
+        JOIN [USER_INFOR] UI ON UI.UserName = U.UserName
+        JOIN [CLINIC_STAFF] CS ON CS.Staff_ID  = UI.User_ID
+        WHERE UI.User_ID = @UserID;
+    END 
+
+    IF @role = 3 -- dentist
+    BEGIN
+        SELECT U.Role_ID, UI.*, CS.*, D.*
+        FROM [USER] U
+        JOIN [USER_INFOR] UI ON UI.UserName = U.UserName
+        JOIN [CLINIC_STAFF] CS ON CS.Staff_ID  = UI.User_ID
+        JOIN [DENTIST] D ON D.Dentist_ID = CS.Staff_ID
+        WHERE UI.User_ID = @UserID;
+    END 
 END;
 GO
+
 
 --get all medicine info
 CREATE OR ALTER PROCEDURE GetMedicineInformation
@@ -34,18 +64,44 @@ BEGIN
 END;
 GO
 
-
---get dentist's schedule by id
-CREATE OR ALTER PROCEDURE GetDoctorSchedule
-    @Dentist_ID VARCHAR(5)
+--- add schedule foR dentist
+CREATE OR ALTER PROCEDURE AddDentistSchedule
+    @DentistID VARCHAR(5),
+    @Day DATE
 AS
 BEGIN
-    SELECT *
+    DECLARE @ScheduleID VARCHAR(5);
+    DECLARE @s_shift INT = 1;
+    IF EXISTS (SELECT * FROM [SCHEDULE] WHERE [Day] = @Day AND [Dentist_ID] = @DentistID)
+        RETURN -1;
+    ELSE 
+        WHILE @s_shift < 18
+        BEGIN 
+                SET @ScheduleID = 'SD' + RIGHT('0000' + CAST((SELECT COUNT(*) FROM [SCHEDULE] WHERE [Day] = @Day) + 1 AS NVARCHAR(3)), 3);
+                INSERT INTO [SCHEDULE] ([Schedule_ID], [Day], [Dentist_ID], [Shift_ID], [Status])
+                VALUES (@ScheduleID, @Day, @DentistID, @s_shift, 0);
+                SET @s_shift = @s_shift + 1;
+        END
+        RETURN 1;
+END
+GO
+
+--get dentist's schedule by id
+CREATE OR ALTER PROCEDURE GetDentistSchedule
+    @Dentist_ID VARCHAR(5),
+    @Day DATE
+AS
+BEGIN
+    SELECT SD.*, S.Time_Frame
     FROM [SCHEDULE] SD
     JOIN [SHIFT] S ON S.Shift_ID = SD.Shift_ID
-    WHERE [Dentist_ID] = @Dentist_ID AND SD.[Status] = 0; 
+    WHERE [Dentist_ID] = @Dentist_ID AND SD.[Status] = 0 AND SD.[Day] =@Day
 END;
 GO
+
+
+
+
 
 --add an user
 CREATE OR ALTER PROCEDURE AddUser
@@ -95,7 +151,7 @@ BEGIN
 END;
 GO
 
-
+--
 CREATE OR ALTER PROCEDURE MakeAppointment
     @Customer_ID VARCHAR(5),
     @Dentist_ID VARCHAR(5),
@@ -130,54 +186,6 @@ GO
 
 
 
-
-CREATE OR ALTER PROCEDURE AddSchedule
-AS
-BEGIN
-    DECLARE @StartDate DATE = GETDATE(); 
-    DECLARE @EndDate DATE = DATEADD(DAY, 7, @StartDate);
-    DECLARE @DentistCursor CURSOR;
-    SET @DentistCursor = CURSOR FOR SELECT [Dentist_ID] FROM [DENTIST];
-    OPEN @DentistCursor;
-    FETCH NEXT FROM @DentistCursor INTO @Dentist_ID;
-    WHILE @@FETCH_STATUS = 0
-    BEGIN
-        DECLARE @CurrentDate DATETIME = @StartDate;
-
-        WHILE @CurrentDate < @EndDate
-        BEGIN
-            DECLARE @IDSD VARCHAR(5);
-            SET @IDSD = 'SD' + RIGHT('000' + CAST((SELECT COUNT(*) FROM [SCHEDULE] WHERE [DAY] = @CurrentDate) + 1 AS VARCHAR(3)), 3);
-
-            -- Kiểm tra xem lịch đã tồn tại hay chưa
-            IF NOT EXISTS (SELECT 1 FROM [SCHEDULE] WHERE [Schedule_ID] = @IDSD AND [Day] = @CurrentDate)
-            BEGIN
-                DECLARE @ShiftCursor CURSOR;
-                SET @ShiftCursor = CURSOR FOR SELECT [Shift_ID] FROM [SHIFT];
-
-                OPEN @ShiftCursor;
-                FETCH NEXT FROM @ShiftCursor INTO @Shift_ID;
-
-                WHILE @@FETCH_STATUS = 0
-                BEGIN
-                    INSERT INTO [SCHEDULE] ([Schedule_ID], [Day], [Dentist_ID], [Shift_ID], [Status])
-                    VALUES (@IDSD , @CurrentDate, @Dentist_ID, @Shift_ID, 0); 
-
-                    FETCH NEXT FROM @ShiftCursor INTO @Shift_ID;
-                END
-
-                CLOSE @ShiftCursor;
-                DEALLOCATE @ShiftCursor;
-            SET @CurrentDate = DATEADD(DAY, 1, @CurrentDate);
-        END
-
-        FETCH NEXT FROM @DentistCursor INTO @Dentist_ID;
-    END
-
-    CLOSE @DentistCursor;
-    DEALLOCATE @DentistCursor;
-
-END;
 
 
 

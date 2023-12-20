@@ -78,3 +78,8 @@ BEGIN
   SET @StartTime = DATEADD(MINUTE, 30, @StartTime);
 END;
 
+--DECLARE @Day DATE = GETDATE();
+--EXECUTE AddDentistSchedule 'D0001', @Day;
+
+
+

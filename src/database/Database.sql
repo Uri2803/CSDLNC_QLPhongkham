@@ -38,7 +38,7 @@ CREATE TABLE [USER_INFOR] (
   [User_ID] VARCHAR(5) PRIMARY KEY,
   [UserName] NVARCHAR(20),
   [FullName] NVARCHAR(70),
-  [BirthDay] DATETIME,
+  [BirthDay] DATE,
   [Sex] NVARCHAR(3),
   [Age] INT,
   [Address] VARCHAR(100),
@@ -49,8 +49,8 @@ GO
 
 CREATE TABLE [CUSTOMER_INFROR] (
   [Customer_ID] VARCHAR(5) PRIMARY KEY,
-  [RecentDateMedicalExam] DATETIME,
-  [ReDateMedicalExam] DATETIME,
+  [RecentDateMedicalExam] DATE,
+  [ReDateMedicalExam] DATE,
   [MedicalHistory] TEXT
 )
 GO
@@ -76,7 +76,7 @@ GO
 
 CREATE TABLE [SCHEDULE] (
   [Schedule_ID] VARCHAR(5),
-  [Day] DATETIME,
+  [Day] DATE,
   [Dentist_ID] VARCHAR(5),
   [Shift_ID] INT,
   [Status] BIT,
@@ -102,7 +102,7 @@ GO
 CREATE TABLE [MEDICAL_RECORD] (
   [Medical_ID] VARCHAR(5) PRIMARY KEY,
   [Customer_ID] VARCHAR(5),
-  [Day] DATETIME,
+  [Day] DATE,
   [DentistResponsible] VARCHAR(5),
   [Diagnostic] TEXT,
   [Prescription_ID] VARCHAR(5),

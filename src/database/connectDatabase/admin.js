@@ -15,6 +15,7 @@ let getAllMedicine = async (req, result) => {
   }
 };
 
+
 module.exports = {
     getAllMedicine: getAllMedicine,
 

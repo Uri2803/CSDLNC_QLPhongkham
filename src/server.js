@@ -20,11 +20,18 @@ app.get('/', (req, res) => {
 
 app.post('/test', ac.test);
 
-app.post('/login', ac.login);
+app.post('/login', ac.login); // username, password
 
-app.post('user/register', ac.register);
+app.post('/register', ac.register); // username, password, mail
 
-app.post('admin/getallmedicine', admin.getAllMedicine); 
+app.post('/userinfor', ac.getUserInfor); // userId
+
+app.post('/getallmedicine', admin.getAllMedicine); //
+
+app.post('/addschedule', dentist.addSchedule); // dentistID, day
+
+app.post('/getscheduledentist', dentist.getDentistSchedule); // dentistID, day
+
 
 //app.get('/customer/appointment');
 

@@ -24,11 +24,11 @@ app.post('/login', ac.login); // username, password
 
 app.post('/register', ac.register); // username, password, mail
 
-app.post('/userinfor', ac.getUserInfor); // userId
+app.post('/userinfor', ac.getUserInfor); // userId    (Nếu id đó là của customor -> infor customer, dentist -> info dentist,  ... )
 
 app.post('/getallmedicine', admin.getAllMedicine); //
 
-app.post('/addschedule', dentist.addSchedule); // dentistID, day
+app.post('/addschedule', dentist.addSchedule); // dentistID, day 
 
 app.post('/getscheduledentist', dentist.getDentistSchedule); // dentistID, day
 

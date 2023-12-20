@@ -27,7 +27,7 @@ app.post('/register', ac.register); // username, password, mail
 
 app.post('/userinfor', ac.getUserInfor); // userId    (Nếu id đó là của customor -> infor customer, dentist -> info dentist,  ... )
 
-app.post('/updateusserinfor', ac.updateUserInfor); //userID, fullName, brirthday, sex, mail, address, phone, banking 
+app.post('/updateusserinfor', ac.updateUserInfor); //userID, fullName, birthday, sex, mail, address, phone, banking
 
 app.post('/getallmedicine', admin.getAllMedicine); //
 

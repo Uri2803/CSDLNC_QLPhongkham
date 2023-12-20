@@ -29,9 +29,11 @@ CREATE OR ALTER PROCEDURE UpdateUserInfor
     @Banking VARCHAR(20)
 AS
 BEGIN
-    IF EXISTS  (SELECT * FROM [USER_INFOR] WHERE [USER_ID] =@User_ID)
+    IF NOT EXISTS  (SELECT * FROM [USER_INFOR] WHERE [USER_ID] =@User_ID)
+    BEGIN
         RAISERROR('Không tồn tại User', 16,1);
         RETURN;
+    END
     DECLARE @Username NVARCHAR(20);
     SELECT @Username = UI.UserName FROM [USER_INFOR] UI WHERE UI.[USER_ID] =@User_ID;
 

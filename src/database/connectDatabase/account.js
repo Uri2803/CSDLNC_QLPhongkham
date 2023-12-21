@@ -28,7 +28,7 @@ let creaateUser = (user, result) =>{
             const request = db.request();
             console.log(user);
             request.input('UserName', sql.NVARCHAR(20), user.username);
-            request.input('Password', sql.VARCHAR(300), user.password);
+            request.input('Password', sql.VARCHAR(300), pass);
             request.input('Email', sql. VARCHAR(50), user.mail);
             request.input('Role_ID', sql.INT, 1);
             const res = await request.query(" EXEC AddUser @UserName, @Password, @Email, @Role_ID ");

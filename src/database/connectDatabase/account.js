@@ -1,4 +1,5 @@
 const { sql, db, connectToDatabase } = require('../connect');
+import bcrypt from "bcrypt";
 
 let findUser = async (username, result) => {
   try {
@@ -6,7 +7,6 @@ let findUser = async (username, result) => {
     const request = db.request();
     request.input('UserName', sql.NVarChar(20), username);
     const res = await request.query("EXEC GetUserByUsername @UserName");
-    console.log(res);
     return result(null, res.recordset[0]);
   } 
   catch (err) {
@@ -26,16 +26,16 @@ let creaateUser = (user, result) =>{
           try {
             await connectToDatabase(); 
             const request = db.request();
+            console.log(user);
             request.input('UserName', sql.NVARCHAR(20), user.username);
             request.input('Password', sql.VARCHAR(300), user.password);
             request.input('Email', sql. VARCHAR(50), user.mail);
             request.input('Role_ID', sql.INT, 1);
-            const res = await request.query("AddUser ReadUserInfoByUserId @UserName, @Password, @Email, @Role_ID ");
-            return result(null, res.recordset[0]);
+            const res = await request.query(" EXEC AddUser @UserName, @Password, @Email, @Role_ID ");
+            return result(null, 'Đăng ký thành công');
           } 
           catch (err) {
-              console.log('err' +err);
-            return result(err, null);
+            return result(err, 'Lỗi kết nối');
           } 
           finally {
             sql.close();

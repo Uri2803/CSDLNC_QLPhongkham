@@ -38,21 +38,29 @@ let login = (req, res) =>{
 
 let register = (req, res) => {
     const { username, password, mail } = req.body;
-    if (username && npassword && mail) {
-        ac.findUser(username, (err, user) => { // kiểm tra user có tồn tại không 
-            if (user) {
-                res.json({status: false, message: 'Tài khoản đã tồn tại'});
-            } 
-            if(!user) {
-                const user = { username, password, mail};
-                account.createAccount(user, (err, message) => {
-                    if (err) {
-                        res.json({status: false, message: message});
-                    } else {
-                        res.json({status: true, message: message});
-                    }
-                });
+    if (username && password && mail) {
+        ac.findUser(username, (err, user) => {
+            if(err){
+                console.log(err);
+                res.json({message: 'Lỗi kết nối', status: false});
             }
+            else{
+                if (user) {
+                    res.json({status: false, message: 'Tài khoản đã tồn tại'});
+                } 
+                if(!user) {
+                    const user = { username, password, mail};
+                    console.log(user);
+                    ac.creaateUser(user, (err, message) => {
+                        if (err) {
+                            res.json({status: false, message: message});
+                        } else {
+                            res.json({status: true, message: message});
+                        }
+                    });
+                }
+
+            } // kiểm tra user có tồn tại không  
         });
     } 
     else{

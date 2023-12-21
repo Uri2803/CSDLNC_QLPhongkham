@@ -12,7 +12,7 @@ dist
 dist-ssr
 *.local
 
-database/connect.js
+src/database/connect.js
 
 # Editor directories and files
 .vscode/*

@@ -2,7 +2,7 @@ import sql from "mssql";
 
 const config = {
     user: 'sa',
-    password: '123',
+    password: 'MinQuan@',
     server: 'localhost',
     port: 1433,
     database: 'DENTAL',

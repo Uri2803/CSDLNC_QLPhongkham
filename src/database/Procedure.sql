@@ -292,6 +292,7 @@ BEGIN
 END;
 GO
  
+
  --add an user info
 CREATE OR ALTER PROCEDURE AddUserInfo
     @User_ID CHAR(5),
@@ -310,7 +311,6 @@ BEGIN
     VALUES (@User_ID, @UserName, @FullName, @BirthDay, @Sex, @Age, @Address, @Phone, @Banking)
 END
 GO
-
 
 
 --delete an user info by username
@@ -412,3 +412,138 @@ BEGIN
 END;
 GO
 
+-- Kiểm tra xem lịch hẹn có trùng hay không, thông tin bác sĩ có hợp lệ không
+CREATE OR ALTER PROCEDURE CheckAppointment
+  @Schedule_ID VARCHAR(5),
+  @Day DATETIME,
+  @Dentist_ID VARCHAR(5)
+AS
+BEGIN
+  IF EXISTS (SELECT * FROM SCHEDULE WHERE Schedule_ID = @Schedule_ID AND Day = @Day)
+    RAISERROR ('Lịch hẹn đã tồn tại', 16, 1);
+  IF NOT EXISTS (SELECT * FROM DENTIST WHERE Dentist_ID = @Dentist_ID)
+    RAISERROR ('Thông tin bác sĩ không hợp lệ', 16, 1);
+END;
+GO
+
+-- Lưu thông tin kế hoạch điều trị cho từng bệnh nhân
+CREATE OR ALTER PROCEDURE SaveTreatmentPlan
+  @Medical_ID VARCHAR(5),
+  @Customer_ID VARCHAR(5),
+  @Day DATETIME,
+  @DentistResponsible VARCHAR(5),
+  @Diagnostic TEXT,
+  @Prescription_ID VARCHAR(5),
+  @ServiceForm_ID VARCHAR(5),
+  @Invoice_ID VARCHAR(5)
+AS
+BEGIN
+  INSERT INTO MEDICAL_RECORD
+  VALUES (@Medical_ID, @Customer_ID, @Day, @DentistResponsible, @Diagnostic, @Prescription_ID, @ServiceForm_ID, @Invoice_ID);
+END;
+GO
+
+-- Lưu thông tin liệu trình điều trị được chọn cho bệnh nhân
+CREATE OR ALTER PROCEDURE SaveTreatmentRegimen
+  @ServiceFormDetail_ID VARCHAR(5),
+  @ServiceForm_ID VARCHAR(5),
+  @Service_ID VARCHAR(5),
+  @DentistResponsible VARCHAR(5)
+AS
+BEGIN
+  INSERT INTO SERVICE_FORM_DETAIL
+  VALUES (@ServiceFormDetail_ID, @ServiceForm_ID, @Service_ID, @DentistResponsible);
+END;
+GO
+
+-- Lấy ra thông tin điều trị của bệnh nhân
+CREATE OR ALTER PROCEDURE GetPatientTreatmentInfo
+  @Customer_ID VARCHAR(5)
+AS
+BEGIN
+  SELECT * FROM MEDICAL_RECORD WHERE Customer_ID = @Customer_ID;
+END;
+GO
+
+-- Xử lý việc thanh toán của bệnh nhân
+CREATE OR ALTER PROCEDURE ProcessPatientPayment
+  @Invoice_ID VARCHAR(5),
+  @PaymentStatus BIT
+AS
+BEGIN
+  UPDATE PAYMENT_INVOICE SET PaymentStatus = @PaymentStatus WHERE Invoice_ID = @Invoice_ID;
+END;
+GO
+
+-- Thêm mới thông tin khách hàng
+CREATE OR ALTER PROCEDURE AddNewCustomer
+  @User_ID VARCHAR(5),
+  @UserName NVARCHAR(20),
+  @FullName NVARCHAR(70),
+  @BirthDay DATETIME,
+  @Sex NVARCHAR(3),
+  @Age INT
+AS
+BEGIN
+  INSERT INTO USER_INFOR
+  VALUES (@User_ID, @UserName, @FullName, @BirthDay, @Sex, @Age);
+END;
+GO
+
+-- Đặt lịch hẹn cho bệnh nhân
+CREATE OR ALTER PROCEDURE BookAppointment
+  @Appointment_ID VARCHAR(5),
+  @Customer_ID VARCHAR(5),
+  @Schedule_ID VARCHAR(5),
+  @Day DATETIME
+AS
+BEGIN
+  INSERT INTO APPOINTMENT
+  VALUES (@Appointment_ID, @Customer_ID, @Schedule_ID, @Day);
+END;
+GO
+
+--xóa user
+CREATE OR ALTER PROCEDURE DeleteUser
+  @UserName NVARCHAR(20)
+AS
+BEGIN
+  -- Xoá thông tin liên quan tới user trong các bảng khác
+  DELETE FROM USER_INFOR WHERE UserName = @UserName;
+  DELETE FROM CUSTOMER_INFROR WHERE Customer_ID IN (SELECT User_ID FROM USER_INFOR WHERE UserName = @UserName);
+  DELETE FROM CLINIC_STAFF WHERE Staff_ID IN (SELECT User_ID FROM USER_INFOR WHERE UserName = @UserName);  
+  -- Xoá user
+  DELETE FROM [USER] WHERE UserName = @UserName;
+END;
+GO
+
+--thêm thuốc vào đơn thuốc:
+CREATE OR ALTER PROCEDURE AddMedicineToPrescription
+  @PrescriptionDetail_ID VARCHAR(5),
+  @Prescription_ID VARCHAR(5),
+  @Medicine_ID VARCHAR(5),
+  @MedicineName NVARCHAR(100),
+  @Unit NVARCHAR(15),
+  @Quantity INT,
+  @Dosage NVARCHAR(100),
+  @TotalMoney INT
+AS
+BEGIN
+  INSERT INTO PRESCRIPTION_DETAIL
+  VALUES (@PrescriptionDetail_ID, @Prescription_ID, @Medicine_ID, @MedicineName, @Unit, @Quantity, @Dosage, @TotalMoney);
+END;
+GO
+
+
+--thêm dịch vụ:
+CREATE OR ALTER PROCEDURE AddService
+  @Service_ID VARCHAR(5),
+  @ServiecName NVARCHAR(100),
+  @ServiceDiscri TEXT,
+  @Price INT
+AS
+BEGIN
+  INSERT INTO SERVICE
+  VALUES (@Service_ID, @ServiecName, @ServiceDiscri, @Price);
+END;
+GO

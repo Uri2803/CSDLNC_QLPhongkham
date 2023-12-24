@@ -16,9 +16,7 @@ GO
 
 
 
---Update userinfor
-
---update an user by username
+--Update customerinfor
 CREATE OR ALTER PROCEDURE UpdateUserInfor
     @User_ID NVARCHAR(20),
     @FullName NVARCHAR(70),
@@ -27,7 +25,8 @@ CREATE OR ALTER PROCEDURE UpdateUserInfor
     @Mail VARCHAR(50),
     @Address NVARCHAR(100),
     @Phone CHAR(10),
-    @Banking VARCHAR(20)
+    @Banking VARCHAR(20),
+    @Medicalhistory TEXT
 AS
 BEGIN
     IF NOT EXISTS  (SELECT * FROM [USER_INFOR] WHERE [USER_ID] =@User_ID)

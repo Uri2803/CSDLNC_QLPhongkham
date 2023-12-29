@@ -12,7 +12,7 @@ let getscheduledentist = async (scd, result) => {
     return result(null, res.recordset);
   } 
   catch (err) {
-    return result(err, null);
+    return result(err, 'lỗi kết nối');
   } 
   finally {
     sql.close();
@@ -37,8 +37,26 @@ let addSchedule = async (scd, result) =>{
   }
 }
 
+let getDentistInfor = async (dentistID, result)=>{
+  try {
+    await connectToDatabase(); 
+    const request = db.request();
+    request.input('DentistID', sql.VarChar(5), dentistID);
+    const res = await request.query("EXEC GetDoctorInformation @DentistID");
+    return result(null, res.recordset);
+  } 
+  catch (err) {
+    return result(err, null);
+  } 
+  finally {
+    sql.close();
+  }
+
+}
+
 module.exports = {
     getscheduledentist:getscheduledentist,
     addSchedule: addSchedule,
+    getDentistInfor: getDentistInfor,
 
 }

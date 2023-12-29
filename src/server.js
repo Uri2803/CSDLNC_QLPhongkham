@@ -47,6 +47,10 @@ app.post('/getappoimentcard', cus.getAppoimentCard) //customerID
 
 app.post('dentist/schedule', dentist.getDentistSchedule)
 
+app.post('dentist/infor', dentist.getDentistInfor); //dentistID
+
+
+
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });

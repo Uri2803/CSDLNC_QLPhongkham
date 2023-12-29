@@ -40,9 +40,28 @@ let addSchedule = (req, res) =>{
     }
 }
 
+let getDentistInfor = (req, res) =>{
+    const {dentistID} = req.body;
+    if(dentistID){
+        dentist.getDentistInfor(dentistID, (err, dentistInfor)=>{
+            if(err){
+                res.json({status: false, message: 'Lỗi kết nối'});
+            }
+            else{
+                res.json({status: true, dentistInfor: dentistInfor});
+            }
+        });
+    }
+    else{
+        res.json({status: false, message: 'Chưa điền đầy đủ thông tin '});
+    }
+    
+}
+
 
 module.exports = {
     getDentistSchedule: getDentistSchedule,
     addSchedule: addSchedule,
+    getDentistInfor: getDentistInfor,
 
 }

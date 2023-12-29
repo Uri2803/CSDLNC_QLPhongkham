@@ -247,9 +247,62 @@ BEGIN
     WHERE AP.Customer_ID = @Customer_ID;
 END;
 
+--find a dentist by id
+CREATE OR ALTER PROCEDURE GetDoctorInformation
+    @Dentist_ID VARCHAR(5)
+AS
+BEGIN
+    SELECT UI.FullName, UI.Phone, UI.Sex, UI.Age, P.PostitionName, D.*
+    FROM [USER_INFOR] UI
+    JOIN [CLINIC_STAFF] CS ON CS.Staff_ID = UI.User_ID
+    JOIN [POSTITION] P ON P.Postition_ID = P.PostitionName
+    JOIN [DENTIST] D ON D.Dentist_ID = CS.Staff_ID
+    WHERE  D.Dentist_ID= @Dentist_ID;
+END;
+GO
+
+
+-- Lưu thông tin kế hoạch điều trị cho từng bệnh nhân
+CREATE OR ALTER PROCEDURE SaveTreatmentPlan
+  @Medical_ID VARCHAR(5),
+  @Customer_ID VARCHAR(5),
+  @Day DATETIME,
+  @DentistResponsible VARCHAR(5),
+  @Diagnostic TEXT,
+  @Prescription_ID VARCHAR(5),
+  @ServiceForm_ID VARCHAR(5),
+  @Invoice_ID VARCHAR(5)
+AS
+BEGIN
+  INSERT INTO MEDICAL_RECORD
+  VALUES (@Medical_ID, @Customer_ID, @Day, @DentistResponsible, @Diagnostic, @Prescription_ID, @ServiceForm_ID, @Invoice_ID);
+END;
+GO
+
+
+
+
+
+
 ------------------------------------------------XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX----------------------------------------------------------
 ------------------------------------------------XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX----------------------------------------------------------
 
+
+-- Lưu thông tin kế hoạch điều trị cho từng bệnh nhân
+CREATE OR ALTER PROCEDURE SaveTreatmentPlan
+  @Customer_ID VARCHAR(5),
+  @DentistResponsible VARCHAR(5),
+  @Diagnostic TEXT
+AS
+BEGIN
+    DECLARE @ID VARCHAR(5);
+    SET @ID = '' + RIGHT('0000' + CAST((SELECT COUNT(*) FROM [USER_INFOR] WHERE [USER_ID] LIKE 'U%') + 1 AS NVARCHAR(4)), 4);
+
+
+  INSERT INTO MEDICAL_RECORD
+  VALUES (@Medical_ID, @Customer_ID, @Day, @DentistResponsible, @Diagnostic, @Prescription_ID, @ServiceForm_ID, @Invoice_ID);
+END;
+GO
 
 
 
@@ -322,16 +375,6 @@ BEGIN
 END;
 GO
 
---find a dentist by id
-CREATE OR ALTER PROCEDURE GetDoctorInformation
-    @Dentist_ID VARCHAR(5)
-AS
-BEGIN
-    SELECT *
-    FROM [DENTIST]
-    WHERE [Dentist_ID] = @Dentist_ID;
-END;
-GO
 
 
 --get dentist's schedule by id
@@ -426,22 +469,6 @@ BEGIN
 END;
 GO
 
--- Lưu thông tin kế hoạch điều trị cho từng bệnh nhân
-CREATE OR ALTER PROCEDURE SaveTreatmentPlan
-  @Medical_ID VARCHAR(5),
-  @Customer_ID VARCHAR(5),
-  @Day DATETIME,
-  @DentistResponsible VARCHAR(5),
-  @Diagnostic TEXT,
-  @Prescription_ID VARCHAR(5),
-  @ServiceForm_ID VARCHAR(5),
-  @Invoice_ID VARCHAR(5)
-AS
-BEGIN
-  INSERT INTO MEDICAL_RECORD
-  VALUES (@Medical_ID, @Customer_ID, @Day, @DentistResponsible, @Diagnostic, @Prescription_ID, @ServiceForm_ID, @Invoice_ID);
-END;
-GO
 
 -- Lưu thông tin liệu trình điều trị được chọn cho bệnh nhân
 CREATE OR ALTER PROCEDURE SaveTreatmentRegimen

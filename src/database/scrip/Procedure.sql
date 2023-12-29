@@ -530,6 +530,19 @@ BEGIN
 END;
 GO
 
+-- Xem lịch hẹn của bệnh nhân
+CREATE PROCEDURE GetPatientAppointments
+  @UserName NVARCHAR(20)
+AS
+BEGIN
+  SELECT UI.UserName, UI.FullName, A.Day
+  FROM USER_INFOR UI
+  JOIN CUSTOMER_INFROR CI ON UI.User_ID = CI.Customer_ID
+  JOIN APPOINTMENT A ON CI.Customer_ID = A.Customer_ID
+  WHERE UI.UserName = @UserName;
+END;
+GO
+
 --xóa user
 CREATE OR ALTER PROCEDURE DeleteUser
   @UserName NVARCHAR(20)
@@ -572,5 +585,19 @@ AS
 BEGIN
   INSERT INTO SERVICE
   VALUES (@Service_ID, @ServiecName, @ServiceDiscri, @Price);
+END;
+GO
+
+
+--thông tin của một bác sĩ cùng với thông tin về các đơn thuốc mà họ đã kê.
+CREATE PROCEDURE GetDoctorPrescriptions
+  @UserName NVARCHAR(20)
+AS
+BEGIN
+  SELECT UI.UserName, UI.FullName, P.Prescription_ID, P.Advice, P.TotalMoneyPrescription
+  FROM USER_INFOR UI
+  JOIN DENTIST D ON UI.User_ID = D.Dentist_ID
+  JOIN PRESCRIPTION P ON D.Dentist_ID = P.DentistPrescribe
+  WHERE UI.UserName = @UserName;
 END;
 GO
